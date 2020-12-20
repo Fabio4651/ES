@@ -18,8 +18,10 @@
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/css/demo_1/style.css">
-    <link rel="icon" type="image/png" href="img/police.ico"/>
     <!-- End Layout styles -->
+    <link rel="icon" type="image/png" href="img/police.ico"/>
+    <link rel="shortcut icon" href="StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/images/favicon.ico" />
+    <script type="text/javascript" src="js/jquery.js"></script>
   </head>
   <body>
     <div class="container-scroller">
@@ -156,63 +158,140 @@
         </nav>
         <!-- partial -->
         <div class="main-panel">
-          <div class="content-wrapper"> 
-            <div class="col-md-6 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Basic form</h4>
-                  <p class="card-description"> Basic form elements </p>
-                  <form class="forms-sample">
-                    <div class="form-group">
-                      <label for="exampleInputName1">Name</label>
-                      <input type="text" class="form-control" id="exampleInputName1" placeholder="Name">
+<div class="content-wrapper">
+<div class="col-md-6 grid-margin stretch-card">
+<div class="card">
+ <div class="card-body">
+   <h3 class="card-title">Inserir Artigos</h3>
+                <form>
+                <fieldset>
+                  <div class="form-group">
+                    <label for="exampleInputName1">Nome do artigo</label>
+                    <input type="text" class="form-control" id="item" placeholder="">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputName1">Quantidade</label>
+                    <input type="text" class="form-control" id="quantity" placeholder="">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleTextarea1">Descrição</label>
+                    <textarea class="form-control" id="descricao" rows="2"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Imagem</label>
+                    <input type="file" name="img[]" class="file-upload-default">
+                    <div class="input-group col-xs-12">
+                      <input type="text" class="form-control file-upload-info" disabled placeholder="">
+                      <span class="input-group-append">
+                        <button class="btn btn-primary" type="button">Upload</button>
+                      </span>
                     </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail3">Email address</label>
-                      <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputPassword4">Password</label>
-                      <input type="password" class="form-control" id="exampleInputPassword4" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                      <label>File upload</label>
-                      <input type="file" name="img[]" class="file-upload-default">
-                      <div class="input-group col-xs-12">
-                        <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
-                        <span class="input-group-append">
-                          <button class="file-upload-browse btn btn-info" type="button">Upload</button>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputCity1">City</label>
-                      <input type="text" class="form-control" id="exampleInputCity1" placeholder="Location">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleTextarea1">Textarea</label>
-                      <textarea class="form-control" id="exampleTextarea1" rows="2"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success mr-2">Submit</button>
-                    <button class="btn btn-light">Cancel</button>
-                  </form>
+                  </div>
+                <br>
+                <button type="button" id="insert" class="btn btn-primary">Inserir</button>
+                <button type="button" id="create" class="btn btn-primary">Criar</button>
+                <button type="button" id="list" class="btn btn-primary">Atualizar</button>
+                <button type="button" id="remove" class="btn btn-danger">Apagar</button>
+                </fieldset>
+                </form>
+                <hr>
+
+                <table class="table table-bordered table-hover" id="itemlist">
+                </table>
+                </div>
+                </div>
+                <script type="text/javascript">
+                var db=openDatabase("itemDB","1.0","itemDB",65535);
+                $(function(){
+
+                // Criar
+                loadData();
+                $("#create").click(function(){
+                db.transaction(function(transaction){
+                	var sql="CREATE TABLE items "+
+                	"(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"+
+                	"item VARCHAR(100) NOT NULL,"+
+                	"quantity INT(5) NOT NULL)";
+                	transaction.executeSql(sql,undefined,function(){
+                		alert("Tabela criada.");
+                	},function(){
+                		alert("Já existe uma tabela.");
+                	})
+                });
+                });
+
+                // Apagar
+                $("#remove").click(function(){
+                if(!confirm("Tem a certeza que pretende excluir a tabela?","")) return;;
+                db.transaction(function(transaction){
+                	var sql="DROP TABLE items";
+                	transaction.executeSql(sql,undefined,function(){
+                		alert("A tabela foi apagada.")
+                	},function(transaction,err){
+                		alert(err.message);
+                	})
+                });
+                });
+
+                //Inserir
+                $("#insert").click(function(){
+                var item=$("#item").val();
+                var qty=$("#quantity").val();
+                db.transaction(function(transaction){
+                var sql="INSERT INTO items(item,quantity) VALUES(?,?)";
+                transaction.executeSql(sql,[item,qty],function(){
+                	alert("O novo artigo foi adicionado.");
+                },function(transaction,err){
+                	alert(err.message);
+                  })
+                })
+
+                })
+
+                //Atualizar
+                $("#list").click(function(){
+                loadData();
+                })
+
+                function loadData(){
+                		$("#itemlist").children().remove();
+                	db.transaction(function(transaction){
+                		var sql="SELECT * FROM items ORDER BY id DESC";
+                		transaction.executeSql(sql,undefined,function(transaction,result){
+                if(result.rows.length){
+
+                for(var i=0;i<result.rows.length;i++){
+                	var row=result.rows.item(i);
+                	var item=row.item;
+                	var id=row.id;
+                	var quantity=row.quantity;
+                	$("#itemlist").append('<tr><td>'+id+'</td><td>'+item+'</td><td>'+quantity+'</td></tr>');
+                }
+                }else{
+                	$("#itemlist").append('<tr><td colspan="3" align="center">No Item Found</td></tr>');
+                }
+                		},function(transaction,err){
+                			alert('Nenhuma tabela encontrada. Crie uma nova tabela.');
+                		})
+                	})
+                }
+                })
+                </script>
                 </div>
               </div>
+              <!-- content-wrapper ends -->
+              <!-- partial:../../partials/_footer.html -->
+
+              <!-- partial -->
+              <footer class="footer">
+                <div class="container-fluid clearfix">
+                  <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
+                </div>
+              </footer>
             </div>
           </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:../../partials/_footer.html -->
-          <footer class="footer">
-            <div class="container-fluid clearfix">
-              <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
-            </div>
-          </footer>
-          <!-- partial -->
         </div>
-        <!-- main-panel ends -->
-      </div>
-      <!-- page-body-wrapper ends -->
-    </div>
+
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/vendors/js/vendor.bundle.base.js"></script>
