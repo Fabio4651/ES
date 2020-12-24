@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>teste</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	
+	<link rel="stylesheet" href="../static/newstyle.css"/>
+	<link rel="stylesheet" href="../static/bootstrap.css"/>
+	<script>
+	function myFunction() {
+  		let search = document.getElementById("id").value;
+   		console.log(search);
+
+		fetch('/teste?search='+search)
+		.then(function(response) {
+			console.log(response);
+ 			response.text().then(function(text) {
+			   	document.getElementById("show").innerHTML = text;
+    		});
+		})
+	}
+	</script>
+</head>
+<body>
+
+<div style="height: 100vh; width: 100wh;">
+	<div class="d-flex justify-content-center">
+		<form>
+			<label for="fname">id:</label><br>
+			<input id="id" type="text" value="000001"><br>
+			<input type="button" onclick="myFunction()" value="Submit">
+		</form> 
+		<div id="show">...</div>
+	</div>
+</div>
+
+</body>
+</html>
