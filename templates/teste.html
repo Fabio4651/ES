@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>teste</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	
+	<link rel="stylesheet" href="../static/newstyle.css"/>
+	<link rel="stylesheet" href="../static/bootstrap.css"/>
+	<script>
+	function myFunction() {
+
+
+	var nome = "HUGO";
+    var quant = 2;
+    var desc = "helooo";
+
+	datajson = JSON.stringify({
+		nome: nome,
+        quant: quant,
+        desc: desc,
+	})
+		var input = document.querySelector('input[type="file"]')
+		var data = new FormData()
+		data.append('file', input.files[0])
+		data.append('data', datajson);
+		
+		fetch('/artigosteste', {
+		method: 'POST',
+		body: data
+		})
+		.then(function(response) {
+        response.json().then(function(message) {
+        	console.log(message);
+        });
+      	})
+	}
+	</script>
+</head>
+<body>
+
+	<h1>The input accept attribute</h1>
+	<form>
+	  <label for="img">Select image:</label>
+	  <input type="file" id="img" name="img" accept="image/*">
+	  <button type="button" onclick="myFunction()">Send</button>
+	</form>
+	
+</body>
+</html>

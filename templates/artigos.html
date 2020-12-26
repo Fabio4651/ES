@@ -26,29 +26,27 @@
       var nome = document.getElementById("nome");
       var quant = document.getElementById("quant");
       var desc = document.getElementById("desc");
-      var imgpath = document.getElementById("img");
 
-      var data = {
+      datajson = JSON.stringify({
         nome: nome.value,
         quant: quant.value,
         desc: desc.value,
-        imgpath: imgpath.value
-      };
+      })
 
-      fetch("/artigos", {
-        method: "POST",
-        credentials: "include",
-        body: JSON.stringify(data),
-        cache: "no-cache",
-        headers: new Headers({
-          "content-type": "application/json"
-        })
+      var input = document.querySelector('input[type="file"]')
+      var data = new FormData()
+      data.append('file', input.files[0])
+      data.append('data', datajson);
+
+      fetch('/artigos', {
+      method: 'POST',
+      body: data
       })
       .then(function(response) {
-        if (response.status !== 200) {
-          console.log(`Looks like there was a problem. Status code: ${response.status}`);
-          return;
-        }
+        document.getElementById("nome").value = '';
+        document.getElementById("quant").value = '';
+        document.getElementById("desc").value = '';
+        document.getElementById("img").value = '';
         response.json().then(function(message) {
           console.log(message);
         });
@@ -56,7 +54,7 @@
       .catch(function(error) {
         console.log("Fetch error: " + error);
       });
-	}
+  }
   </script>
   </head>
   <body>
@@ -90,15 +88,13 @@
                     </div>
                     <div class="form-group">
                       <label>Imagem</label>
-                      <input type="text" class="form-control" id="img" placeholder="">
-                      <!--
                       <div class="input-group col-xs-12">
-                        <input type="text" class="form-control file-upload-info" disabled placeholder="">
-                        <span class="input-group-append">
-                          <button class="btn btn-primary" type="button">Upload</button>
+                        <span class="btn btn-lg btn-primary">
+                          Upload
+                          <input type="file" style="position: absolute; font-size: 50px; opacity: 0; right: 0; top: 0;" class="" id="img" name="img" accept="image/*">
                         </span>
                       </div>
-                      -->
+                 
                     </div>
                   <br>
                   <button type="button" id="insert" class="btn btn-primary" onclick="myFunction()">Inserir</button>
