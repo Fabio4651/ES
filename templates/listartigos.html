@@ -21,15 +21,15 @@
         <th>img path</th>
         <th>description</th>
     </tr>
-    </thead>    
+    </thead>
     <tbody>
-     {% for row in data %}    
+     {% for row in data %}
             <tr>
-                <td>{{row[0]}}</td>
-                <td>{{row[1]}}</td>
-                <td>{{row[2]}}</td>
-                <td><img src="{{row[3]}}" alt="Girl in a jacket" width="200" height="200"></td>
-                <td>{{row[4]}}</td>
+                <td>{{row.id}}</td>
+                <td>{{row.nome}}</td>
+                <td>{{row.quant}}</td>
+                <td><img src="{{row.imgpath}}" alt="Girl in a jacket" width="200" height="200"></td>
+                <td>{{row.description}}</td>
             </tr>
         {% endfor %}
     </tbody>

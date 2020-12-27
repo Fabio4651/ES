@@ -25,14 +25,18 @@
 		data.append('file', input.files[0])
 		data.append('data', datajson);
 		
-		fetch('/artigosteste', {
-		method: 'POST',
-		body: data
-		})
+		
+	}
+	function logout() {
+		fetch('/logout')
 		.then(function(response) {
-        response.json().then(function(message) {
-        	console.log(message);
-        });
+			response.json().then(function(message) {
+				if(message.check == 'true'){
+					location.replace("/");
+				}else{
+					alert("Failed to logout");
+				}
+			});
       	})
 	}
 	</script>
@@ -40,6 +44,8 @@
 <body>
 
 	<h1>The input accept attribute</h1>
+	<div>user name is: {{session['username']}}</div>
+	<button type="button" onclick="logout()">Logout</button>
 	<form>
 	  <label for="img">Select image:</label>
 	  <input type="file" id="img" name="img" accept="image/*">
