@@ -64,22 +64,10 @@ def login():
 
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
     session.pop('username', None)
     session.clear()
     check = {'check': 'true'}
     return jsonify(check)
-
-"""
-@app.route('/set/<value>')
-def set_session(value):
-    session['value'] = value 
-    return f'The value you set is: { value }'
-
-@app.route('/get')
-def get_session():
-    return f'The value in the session is: { session.get("value") }'
-"""
 
 @app.route('/artigos')
 def artigos():
