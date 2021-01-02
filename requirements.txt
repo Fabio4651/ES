@@ -1,5 +1,7 @@
+<<<<<<< HEAD
 Flask
-flask-mysql
 SQLAlchemy
 requests
 flask-session
+=======
+>>>>>>> 340785e40be76db3cf7146c903771bab82558432
