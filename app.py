@@ -7,6 +7,8 @@ from markupsafe import escape
 import json
 import uuid
 from os.path import join, dirname, realpath
+from flask_uploads import IMAGES, UploadSet, configure_uploads
+from pathlib import Path
 
 #UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'static/img/')
 UPLOAD_FOLDER = 'static/img/'
@@ -30,6 +32,12 @@ app.config['SESSION_SQLALCHEMY'] = db
 
 sess = Session(app)
 
+files = UploadSet('files', IMAGES)
+
+app.config['UPLOADED_FILES_ALLOW'] = set(['png', 'jpg', 'jpeg'])
+app.config['UPLOADED_FILES_DEST'] = 'static/upload'
+configure_uploads(app, files)
+
 class Artigos(db.Model):
     __tablename__ = 'artigos'
     id = db.Column(db.Integer, primary_key=True)
@@ -37,6 +45,15 @@ class Artigos(db.Model):
     quant = db.Column(db.Integer)
     imgpath = db.Column(db.String(80))
     description = db.Column(db.Text)
+
+    def __init__(self,nome,quant,imgpath,description):
+        self.nome=nome
+        self.quant=quant
+        self.imgpath=imgpath
+        self.description=description
+    
+    def __repr__(self):
+        return repr(id)
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -67,67 +84,68 @@ def logout():
     check = {'check': 'true'}
     return jsonify(check)
 
+@app.route('/deleteartigo', methods=['POST'])
+def deleteartigo():
+    if 'username' in session:
+        data=request.args.get('id_artigo')
+        data_file=str(data)+'.jpg'
+        print('teste'+data_file)
+        Artigos.query.filter_by(id=data).delete()
+        my_file = Path(os.path.join(app.config['UPLOADED_FILES_DEST'], data_file))
+        if my_file.exists():
+            os.remove(os.path.join(app.config['UPLOADED_FILES_DEST'], data_file))
+        db.session.commit()
+        return redirect(url_for('listartigos'))
+    return redirect(url_for('index'))
+
 @app.route('/artigos')
 def artigos():
+    r = Artigos.query.all()
     if 'username' in session:
         return render_template('artigos.html')
-    return render_template('login.html')
+    return redirect(url_for('index'))
+
+@app.route('/inserirartigos', methods=['POST'])
+def inserirartigos():
+    if 'username' in session:
+        descending = Artigos.query.order_by(Artigos.id.desc())
+        last_item = descending.first()
+        last_id = last_item.id + 1
+        a = Artigos.query.all()
+        nome = request.form['nome']   
+        quant = request.form['quant']
+        description = request.form['desc']
+        imgpath = request.files['img']
+        if request.method == 'POST' and 'img' in request.files:
+            filename = files.save(request.files['img'], name=str(last_id) + '.jpg')
+        new_artigo = Artigos(nome=nome, quant=quant, description=description, imgpath='static/upload/' + str(last_id) + '.jpg')
+        db.session.add(new_artigo)
+        db.session.commit()
+        return redirect(url_for('listartigos'))
+    return redirect(url_for('index'))
 
 @app.route('/users')
 def users():
     if 'username' in session:
         return render_template('users.html')
-    return render_template('login.html')
+    return redirect(url_for('index'))
 
 @app.route('/teste')
 def teste():
     if 'username' in session:
         return render_template('teste.html')
-    return render_template('login.html')
+    return redirect(url_for('index'))
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route("/artigos", methods=["POST"])
-def artigo_set():
-    data = json.loads(request.form['data'])
-
-    if 'file' not in request.files:
-        print('No file part')
-        return redirect(request.url)
-    file = request.files['file']
-
-    if file.filename == '':
-        print('No selected file')
-        return redirect(request.url)
-
-    filename = file.filename
-    newfile = str(uuid.uuid4())
-    filetype = filename.rsplit('.', 1)[1].lower()
-    fullpath = UPLOAD_FOLDER+newfile+"."+filetype
-
-    try:
-        insert = Artigos(nome=data['nome'], quant=data['quant'], imgpath=fullpath, description=data['desc'])
-        db.session.add(insert)
-    except Exception:
-        print('Error: unable to insert items')    
-
-    try:
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], newfile+"."+filetype))
-    except Exception:
-        print('Error: unable to save file')
-
-    db.session.commit()
-    res = make_response(jsonify({"message": "OK"}), 200)
-    return res
-
 @app.route('/listartigos')
-def v_timestamp():
-    data = Artigos.query.all()
-    return render_template('listartigos.html', data=data)
+def listartigos():
+    if 'username' in session:
+        data = Artigos.query.all()
+        return render_template('listartigos.html', data=data)
+    return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def page_not_found(e):
