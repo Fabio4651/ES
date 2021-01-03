@@ -54,9 +54,7 @@ def index():
 def login():
     if request.method == 'POST':
         data = json.loads(request.form['data'])
-
         querydata = Users.query.filter_by(id = data['id'], password = data['pass']).first()
-
         session['username'] = querydata.nome
         check = {'check': 'true'}
         return jsonify(check)
@@ -71,15 +69,21 @@ def logout():
 
 @app.route('/artigos')
 def artigos():
-    return render_template('artigos.html')
+    if 'username' in session:
+        return render_template('artigos.html')
+    return render_template('login.html')
 
 @app.route('/users')
 def users():
-    return render_template('users.html')
+    if 'username' in session:
+        return render_template('users.html')
+    return render_template('login.html')
 
 @app.route('/teste')
 def teste():
-    return render_template('teste.html')
+    if 'username' in session:
+        return render_template('teste.html')
+    return render_template('login.html')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -127,7 +131,6 @@ def v_timestamp():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    # note that we set the 404 status explicitly
     return render_template('404.html'), 404
 
 if __name__ == '__main__':

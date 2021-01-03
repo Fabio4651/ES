@@ -1,3 +1,0 @@
-if({{session['username']}} == ''){
-
-}

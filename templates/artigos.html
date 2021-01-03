@@ -20,8 +20,9 @@
     <!-- End Layout styles -->
     <link rel="icon" type="image/png" href="img/police.ico"/>
     <link rel="shortcut icon" href="StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/images/favicon.ico" />
+
     <script type="text/javascript" src="js/jquery.js"></script>
-    <script src="{{ url_for('static', filename='js/session.js') }}" async></script>
+    <!-- <script src="{{ url_for('static', filename='js/session.js') }}" async></script>-->
   <script>
     function myFunction() {
       var nome = document.getElementById("nome");
@@ -58,7 +59,7 @@
   }
   </script>
   </head>
-  <body>
+  <body onload="check()">
     <div class="container-scroller">
       <!-- partial:../../partials/_navbar.html -->
       {% include 'navbar.html' %}
