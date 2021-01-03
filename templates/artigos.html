@@ -74,19 +74,19 @@
               <div class="card">
                <div class="card-body">
                  <h3 class="card-title">Inserir Artigos</h3>
-                  <form>
+                  <form method="POST" action="/inserirartigos" enctype="multipart/form-data">
                   <fieldset>
                     <div class="form-group">
                       <label for="exampleInputName1">Nome do artigo</label>
-                      <input type="text" class="form-control" id="nome" placeholder="">
+                      <input type="text" class="form-control" id="nome" name="nome" placeholder="">
                     </div>
                     <div class="form-group">
                       <label for="exampleInputName1">Quantidade</label>
-                      <input type="number" class="form-control" id="quant" placeholder="">
+                      <input type="number" class="form-control" id="quant" name="quant" placeholder="">
                     </div>
                     <div class="form-group">
                       <label for="exampleTextarea1">Descrição</label>
-                      <textarea class="form-control" id="desc" rows="2"></textarea>
+                      <textarea class="form-control" id="desc" name="desc" rows="2"></textarea>
                     </div>
                     <div class="form-group">
                       <label>Imagem</label>
@@ -99,7 +99,7 @@
                       <div>user name is: {{session['username']}}</div>
                     </div>
                   <br>
-                  <button type="button" id="insert" class="btn btn-primary" onclick="myFunction()">Inserir</button>
+                  <button type="submit" id="insert" class="btn btn-primary">Inserir</button>
                   <!--<button type="button" id="create" class="btn btn-primary">Criar</button>
                   <button type="button" id="list" class="btn btn-primary">Atualizar</button>
                   <button type="button" id="remove" class="btn btn-danger">Apagar</button>-->
