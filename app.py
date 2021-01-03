@@ -20,7 +20,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #The secret key shhh 
 app.config['SECRET_KEY'] = '_1#y6G"F7Q2z\n\succ/'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/test'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'sqlalchemy'
 
