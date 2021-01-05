@@ -1,5 +1,17 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
+	           <li class="nav-item nav-profile">
+              <a href="#" class="nav-link">
+                <div class="profile-image">
+                  <img class="img-xs rounded-circle" src="{{ url_for('static', filename='img/user.png') }}" alt="Perfil">
+                  <div class="dot-indicator bg-success"></div>
+                </div>
+                <div class="text-wrapper">
+                  <p class="profile-name">{{session['username']}}</p>
+                  <p class="designation">Utilizador</p>
+                </div>
+              </a>
+            </li>
       <li class="nav-item nav-category">Menu</li>
       <li class="nav-item">
         <a class="nav-link" href="/artigos">

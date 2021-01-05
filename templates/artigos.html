@@ -3,6 +3,7 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
+	  <title>Gestão de Inventários</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ url_for('static', filename='StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/vendors/iconfonts/mdi/css/materialdesignicons.min.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/vendors/iconfonts/ionicons/dist/css/ionicons.css') }}"/>
@@ -18,8 +19,8 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/css/demo_1/style.css') }}"/>
     <!-- End Layout styles -->
-    <link rel="icon" type="image/png" href="img/police.ico"/>
-    <link rel="shortcut icon" href="StarAdmin-Free-Bootstrap-Admin-Template-master/src/assets/images/favicon.ico" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/police.ico') }}"/>
+
 
     <script type="text/javascript" src="js/jquery.js"></script>
     <!-- <script src="{{ url_for('static', filename='js/session.js') }}" async></script>-->
@@ -67,6 +68,7 @@
       <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
         {% include 'sidebar.html' %}
+		
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
@@ -88,18 +90,20 @@
                       <label for="exampleTextarea1">Descrição</label>
                       <textarea class="form-control" id="desc" name="desc" rows="2"></textarea>
                     </div>
-                    <div class="form-group">
-                      <label>Imagem</label>
-                      <div class="input-group col-xs-12">
-                        <span class="btn btn-lg btn-primary">
-                          Upload
-                          <input type="file" style="position: absolute; font-size: 50px; opacity: 0; right: 0; top: 0;" class="" id="img" name="img" accept="image/*">
+					
+					  <div class="form-group">
+                    
+					<label>Imagem</label>
+					<br><br>
+                      <input type="file" name="img[]" class="file-upload-default">
+                      <div class="input-group col-xs-12"> 
+                        <span class="input-group-append">
+                          <input type="file" id="img" name="img">
                         </span>
                       </div>
-                      <div>user name is: {{session['username']}}</div>
                     </div>
                   <br>
-                  <button type="submit" id="insert" class="btn btn-primary">Inserir</button>
+                  <button type="submit" id="insert" class="btn btn-lg btn-primary">Inserir</button>
                   <!--<button type="button" id="create" class="btn btn-primary">Criar</button>
                   <button type="button" id="list" class="btn btn-primary">Atualizar</button>
                   <button type="button" id="remove" class="btn btn-danger">Apagar</button>-->
