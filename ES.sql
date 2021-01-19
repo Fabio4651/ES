@@ -1,81 +1,136 @@
-CREATE DATABASE  IF NOT EXISTS `es` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `es`;
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 5.0.4
+-- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1    Database: es
--- ------------------------------------------------------
--- Server version	8.0.18
+-- Host: 127.0.0.1
+-- Tempo de geração: 02-Jan-2021 às 18:23
+-- Versão do servidor: 10.4.17-MariaDB
+-- versão do PHP: 7.4.13
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Table structure for table `artigo`
+-- Banco de dados: `test`
 --
 
-DROP TABLE IF EXISTS `artigo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `artigo` (
-  `idartigo` int(11) NOT NULL,
-  PRIMARY KEY (`idartigo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `artigo`
+-- Estrutura da tabela `artigos`
 --
 
-LOCK TABLES `artigo` WRITE;
-/*!40000 ALTER TABLE `artigo` DISABLE KEYS */;
-/*!40000 ALTER TABLE `artigo` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE `artigos` (
+  `id` int(10) NOT NULL,
+  `nome` varchar(25) NOT NULL,
+  `quant` int(11) NOT NULL,
+  `imgpath` varchar(80) NOT NULL,
+  `description` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Table structure for table `users`
+-- Extraindo dados da tabela `artigos`
 --
 
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
+INSERT INTO `artigos` (`id`, `nome`, `quant`, `imgpath`, `description`) VALUES
+(16, 'cassetete', 15, 'static/img/d744735a-6122-43db-bea3-012e687d46cb.png', 'arma'),
+(17, 'farda', 12, 'static/img/ea6cdcb3-cb8e-4546-bde8-1a56b9c801bc.jpg', 'farda'),
+(18, 'asdf', 111, 'static/img/f4d34e22-b545-49b9-bd3f-abff7da75348.jpg', 'assdf');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `sessions`
+--
+
+CREATE TABLE `sessions` (
   `id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `session_id` varchar(255) DEFAULT NULL,
+  `data` blob DEFAULT NULL,
+  `expiry` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `users`
+-- Extraindo dados da tabela `sessions`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `sessions` (`id`, `session_id`, `data`, `expiry`) VALUES
+(34, 'session:49a12bf3-efa4-4a9e-afa9-39ffb022f4bd', 0x80037d7100580a0000005f7065726d616e656e74710188732e, '2021-02-02 17:21:56');
+
+-- --------------------------------------------------------
 
 --
--- Dumping events for database 'es'
+-- Estrutura da tabela `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(6) UNSIGNED ZEROFILL NOT NULL,
+  `password` varchar(20) NOT NULL,
+  `nome` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Extraindo dados da tabela `users`
+--
+
+INSERT INTO `users` (`id`, `password`, `nome`) VALUES
+(000001, 'teste', 'hugo'),
+(000002, 'teste2', 'fabs'),
+(000003, 'bababui', 'zman');
+
+--
+-- Índices para tabelas despejadas
 --
 
 --
--- Dumping routines for database 'es'
+-- Índices para tabela `artigos`
 --
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+ALTER TABLE `artigos`
+  ADD PRIMARY KEY (`id`);
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Índices para tabela `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `session_id` (`session_id`);
+
+--
+-- Índices para tabela `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de tabelas despejadas
+--
+
+--
+-- AUTO_INCREMENT de tabela `artigos`
+--
+ALTER TABLE `artigos`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT de tabela `sessions`
+--
+ALTER TABLE `sessions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
+-- AUTO_INCREMENT de tabela `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2020-11-29 16:33:01

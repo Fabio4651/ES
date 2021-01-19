@@ -22,7 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #The secret key shhh 
 app.config['SECRET_KEY'] = '_1#y6G"F7Q2z\n\succ/'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/ES'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'sqlalchemy'
 
@@ -58,20 +58,31 @@ class Artigos(db.Model):
 class Users(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    codigo = db.Column(db.Integer, nullable=False)
     nome = db.Column(db.String(20))
     password = db.Column(db.String(20))
+    cargo = db.Column(db.String(20), nullable=False)
+    img = db.Column(db.String(80))
 
 @app.route('/')
 def index():
     if 'username' in session:
-        return 'Logged in as %s' % escape(session['username'])
+        #return 'Logged in as %s' % escape(session['username'])
+        return redirect(url_for('listartigos'))
     return render_template('login.html')
+
+@app.route('/main')
+def main():
+    if 'username' in session:
+        #return 'Logged in as %s' % escape(session['username'])
+        return render_template('index.html')
+    return render_template('login.html')    
 
 @app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         data = json.loads(request.form['data'])
-        querydata = Users.query.filter_by(id = data['id'], password = data['pass']).first()
+        querydata = Users.query.filter_by(codigo = data['codigo'], password = data['pass']).first()
         session['username'] = querydata.nome
         check = {'check': 'true'}
         return jsonify(check)
@@ -82,7 +93,8 @@ def logout():
     session.pop('username', None)
     session.clear()
     check = {'check': 'true'}
-    return jsonify(check)
+    #return jsonify(check)
+    return redirect(url_for('index'))
 
 @app.route('/deleteartigo', methods=['POST'])
 def deleteartigo():
@@ -116,13 +128,49 @@ def inserirartigos():
         quant = request.form['quant']
         description = request.form['desc']
         imgpath = request.files['img']
-        if request.method == 'POST' and 'img' in request.files:
-            filename = files.save(request.files['img'], name=str(last_id) + '.jpg')
-        new_artigo = Artigos(nome=nome, quant=quant, description=description, imgpath='static/upload/' + str(last_id) + '.jpg')
+        filename = 'static/img/user.png'
+        if request.method == 'POST' and imgpath:
+            filename = 'static/upload/' + files.save(request.files['img'])
+        new_artigo = Artigos(nome=nome, quant=quant, description=description, imgpath=filename)
         db.session.add(new_artigo)
         db.session.commit()
         return redirect(url_for('listartigos'))
     return redirect(url_for('index'))
+
+@app.route("/updateartigo", methods=['POST'])
+def updateartigo():
+    if 'username' in session:
+        data=request.args.get('id_artigo')
+        update = Artigos.query.filter_by(id=data)
+
+        return render_template('editarartigos.html', update=update)
+    return redirect(url_for('index'))   
+
+@app.route('/editartigo', methods=['POST'])
+def editartigo():
+    if 'username' in session:
+        
+        data = request.form['id']
+        update = Artigos.query.filter_by(id=data).first()
+        bd_img = update.imgpath
+        img = request.files['img']
+
+        if request.method == 'POST' and 'nome' in request.form:
+            update.nome = request.form['nome'] 
+
+        if request.method == 'POST' and 'quant' in request.form:    
+            update.quant = request.form['quant']
+
+        if request.method == 'POST' and 'desc' in request.form:
+            update.description = request.form['desc']     
+
+        update.imgpath = bd_img
+        if request.method == 'POST' and img:
+            update.imgpath = 'static/upload/' + files.save(request.files['img']) 
+
+        db.session.commit()
+        return redirect(url_for('listartigos'))
+    return redirect(url_for('index'))    
 
 @app.route('/users')
 def users():
@@ -133,7 +181,8 @@ def users():
 @app.route('/teste')
 def teste():
     if 'username' in session:
-        return render_template('teste.html')
+        return redirect(url_for('index'))
+        #return render_template('teste.html')
     return redirect(url_for('index'))
 
 def allowed_file(filename):
