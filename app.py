@@ -22,7 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #The secret key shhh 
 app.config['SECRET_KEY'] = '_1#y6G"F7Q2z\n\succ/'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/ES'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/es'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'sqlalchemy'
 
@@ -59,23 +59,34 @@ class Users(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     codigo = db.Column(db.Integer, nullable=False)
-    nome = db.Column(db.String(20))
     password = db.Column(db.String(20))
+    nome = db.Column(db.String(20))
     cargo = db.Column(db.String(20), nullable=False)
     img = db.Column(db.String(80))
+
+    def __init__(self,codigo,password,nome,cargo,img):
+        self.codigo=codigo
+        self.password=password
+        self.nome=nome
+        self.cargo=cargo
+        self.img=img
+    
+    def __repr__(self):
+        return repr(id)
 
 @app.route('/')
 def index():
     if 'username' in session:
         #return 'Logged in as %s' % escape(session['username'])
-        return redirect(url_for('listartigos'))
+        return redirect(url_for('main'))
     return render_template('login.html')
 
 @app.route('/main')
 def main():
     if 'username' in session:
-        #return 'Logged in as %s' % escape(session['username'])
-        return render_template('index.html')
+        total_users = Users.query.count()
+        total_artigos = Artigos.query.count()
+        return render_template('index.html', total_users=total_users, total_artigos=total_artigos)
     return render_template('login.html')    
 
 @app.route('/login', methods=['POST'])
@@ -84,6 +95,8 @@ def login():
         data = json.loads(request.form['data'])
         querydata = Users.query.filter_by(codigo = data['codigo'], password = data['pass']).first()
         session['username'] = querydata.nome
+        session['img'] = querydata.img
+        session['cargo'] = querydata.cargo
         check = {'check': 'true'}
         return jsonify(check)
     return 'hi'
@@ -177,6 +190,85 @@ def users():
     if 'username' in session:
         return render_template('users.html')
     return redirect(url_for('index'))
+
+@app.route('/criarusers')
+def criarusers():
+    u = Users.query.all()
+    if 'username' in session:
+        return render_template('criarusers.html')
+    return redirect(url_for('index'))
+
+@app.route('/inserirusers', methods=['POST'])
+def inserirusers():
+    if 'username' in session:
+        nome = request.form['nome']   
+        idagente = request.form['idagente']  
+        password = request.form['password']
+        cargo = request.form['cargo']
+        img = request.files['img']
+        filename = 'static/img/user.png'
+        if request.method == 'POST' and img:
+            filename = 'static/upload/' + files.save(request.files['img'])
+        new_user = Users(nome=nome, codigo=idagente, password=password, cargo=cargo, img=filename)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('listusers'))
+    return redirect(url_for('index'))
+
+@app.route('/listusers')
+def listusers():
+    if 'username' in session:
+        data = Users.query.all()
+        return render_template('listusers.html', data=data)
+    return redirect(url_for('index'))
+
+@app.route('/updateusers', methods=['POST'])
+def updateusers():
+    if 'username' in session:
+        data=request.args.get('id_user')
+        print(str(data))
+        update = Users.query.filter_by(id=data)
+
+        return render_template('editusers.html', update=update)
+    return redirect(url_for('index'))   
+
+@app.route('/editusers', methods=['POST'])
+def editusers():
+    if 'username' in session:
+        data = request.form['id']
+        update = Users.query.filter_by(id=data).first()
+        bd_img = update.img
+        img = request.files['img']
+
+        if request.method == 'POST' and 'nome' in request.form:
+            update.nome = request.form['nome'] 
+
+        if request.method == 'POST' and 'codigo' in request.form:    
+            update.codigo = request.form['id_agente']
+
+        if request.method == 'POST' and 'password' in request.form:
+            update.password = request.form['password']     
+       
+        if request.method == 'POST' and 'cargo' in request.form:
+             update.cargo = request.form['cargo']     
+
+        update.img = bd_img
+        if request.method == 'POST' and img:
+            update.img = 'static/upload/' + files.save(request.files['img']) 
+
+        db.session.commit()
+        return redirect(url_for('listusers'))
+    return redirect(url_for('index'))    
+
+@app.route('/deleteuser', methods=['POST'])
+def deleteuser():
+    if 'username' in session:
+        data=request.args.get('id_user')
+        Users.query.filter_by(id=data).delete()
+        db.session.commit()
+        return redirect(url_for('listusers'))
+    return redirect(url_for('index'))
+
 
 @app.route('/teste')
 def teste():

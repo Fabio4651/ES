@@ -3,12 +3,12 @@
 	           <li class="nav-item nav-profile">
               <a href="#" class="nav-link">
                 <div class="profile-image">
-                  <img class="img-xs rounded-circle" src="{{ url_for('static', filename='img/user.png') }}" alt="Perfil">
+                  <img class="img-xs rounded-circle" src="{{session['img']}}" alt="Perfil">
                   <div class="dot-indicator bg-success"></div>
                 </div>
                 <div class="text-wrapper">
                   <p class="profile-name">{{session['username']}}</p>
-                  <p class="designation">Utilizador</p>
+                  <p class="designation">{{session['cargo']}}</p>
                 </div>
               </a>
             </li>
@@ -27,10 +27,15 @@
       </li>
       <li class="nav-item nav-category">Utilizadores</li>
       <li class="nav-item">
-        <a class="nav-link" href="/users">
+        <a class="nav-link" href="/listusers">
           <i class="menu-icon typcn typcn-document-text"></i>
-          <span class="menu-title">Adicionar</span>
+          <span class="menu-title">Listar Utilizadores</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/criarusers">
+          <i class="menu-icon typcn typcn-document-text"></i>
+          <span class="menu-title">Adicionar Utilizadores</span>
+        </a>
     </ul>
   </nav>
