@@ -74,6 +74,27 @@ class Users(db.Model):
     def __repr__(self):
         return repr(id)
 
+class Pedidos(db.Model):
+    __tablename__ = 'pedidos'
+    id = db.Column(db.Integer, primary_key=True)
+    agente = db.Column(db.Integer, db.ForeignKey(Users.id), nullable=False)
+    artigo = db.Column(db.Integer, db.ForeignKey(Artigos.id), nullable=False)
+    quantidade = db.Column(db.Integer, nullable=False)
+    estado = db.Column(db.String(45), nullable=False)
+    inicio = db.Column(db.Date, nullable=False)
+    fim = db.Column(db.Date, nullable=False)
+
+    def __init__(self,agente,artigo,quantidade,estado,inicio,fim):
+        self.agente=agente
+        self.artigo=artigo
+        self.quantidade=quantidade
+        self.estado=estado
+        self.inicio=inicio
+        self.fim=fim
+    
+    def __repr__(self):
+        return repr(id)
+
 @app.route('/')
 def index():
     if 'username' in session:
@@ -95,6 +116,7 @@ def login():
         data = json.loads(request.form['data'])
         querydata = Users.query.filter_by(codigo = data['codigo'], password = data['pass']).first()
         session['username'] = querydata.nome
+        session['id'] = querydata.id
         session['img'] = querydata.img
         session['cargo'] = querydata.cargo
         check = {'check': 'true'}
@@ -213,6 +235,84 @@ def inserirusers():
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('listusers'))
+    return redirect(url_for('index'))
+
+
+@app.route("/updatepedido", methods=['POST'])
+def updatepedido():
+    if 'username' in session:
+        artigos = Artigos.query.all()
+        data=request.args.get('id_pedido')
+        update = Pedidos.query.filter_by(id=data)
+        print(update)
+
+        return render_template('editarpedido.html', update=update, artigos=artigos)
+    return redirect(url_for('index'))   
+
+@app.route('/editpedido', methods=['POST'])
+def editpedido():
+    if 'username' in session:
+        
+        data = request.form['id']
+        update = Artigos.query.filter_by(id=data).first()
+        bd_img = update.imgpath
+        img = request.files['img']
+
+        if request.method == 'POST' and 'nome' in request.form:
+            update.nome = request.form['nome'] 
+
+        if request.method == 'POST' and 'quant' in request.form:    
+            update.quant = request.form['quant']
+
+        if request.method == 'POST' and 'desc' in request.form:
+            update.description = request.form['desc']     
+
+        update.imgpath = bd_img
+        if request.method == 'POST' and img:
+            update.imgpath = 'static/upload/' + files.save(request.files['img']) 
+
+        db.session.commit()
+        return redirect(url_for('listartigos'))
+    return redirect(url_for('index'))    
+
+@app.route('/listpedidos')
+def listpedidos():
+    if 'username' in session:
+        data = Pedidos.query.all()
+        data2 = Artigos.query.all()
+        return render_template('listpedidos.html', data=data, data2=data2)
+    return redirect(url_for('index'))
+
+@app.route('/criarpedido')
+def criarpedido():
+    if 'username' in session:
+        data = Artigos.query.all()
+        return render_template('criarpedido.html', data=data)
+    return redirect(url_for('index'))
+
+@app.route('/inserirpedido', methods=['POST'])
+def inserirpedido():
+    if 'username' in session:
+        user = request.form['user']   
+        artigos = request.form['artigos']  
+        quantidade = request.form['quantidade']
+        inicio = request.form['inicio']
+        fim = request.form['fim']
+        estado = request.form['estado']
+
+        new_pedido = Pedidos(agente=user, artigo=artigos, quantidade=quantidade, inicio=inicio, fim=fim, estado=estado)
+        db.session.add(new_pedido)
+        db.session.commit()
+        return redirect(url_for('listpedidos'))
+    return redirect(url_for('index'))
+
+@app.route('/deletepedido', methods=['POST'])
+def deletepedido():
+    if 'username' in session:
+        data=request.args.get('id_pedido')
+        Pedidos.query.filter_by(id=data).delete()
+        db.session.commit()
+        return redirect(url_for('listpedidos'))
     return redirect(url_for('index'))
 
 @app.route('/listusers')

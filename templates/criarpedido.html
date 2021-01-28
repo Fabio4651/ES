@@ -57,7 +57,8 @@
       .catch(function(error) {
         console.log("Fetch error: " + error);
       });
-	}
+  }
+
   </script>
   </head>
   <body>
@@ -74,48 +75,35 @@
 <div class="col-md-6 grid-margin stretch-card">
 <div class="card">
  <div class="card-body">
-   <h3 class="card-title">Inserir Utilizadores</h3>
+   <h3 class="card-title">Criar Pedido</h3>
 
-   <form method="POST" action="/inserirusers" enctype="multipart/form-data">
+   <form method="POST" action="/inserirpedido" id="pedido" name="pedido" enctype="multipart/form-data">
                 <fieldset>
+                  <input type="hidden" value="{{session['id']}}" class="form-control" value="pendente" name="user" id="user" placeholder="">
                   <div class="form-group">
-                    <label for="exampleInputName1">Nome do Utilizador</label>
-                    <input type="text" class="form-control" name="nome" id="nome" placeholder="">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputName1">Código do Agente</label>
-                    <input type="number" class="form-control" name="idagente" id="idagente" placeholder="">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputName1">Password</label>
-                    <input type="password" class="form-control" name="password" id="password" placeholder="">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputName1">Cargo</label>
-                    <div class="form-radio">
-                      <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="cargo" id="optionsRadios1" value="Quarteleiro" checked> Quarteleiro </label>
+                    <label for="exampleInputName1">Artigo</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="artigos" id="artigos" required>
+                          <option value=""></option>
+                            {% for row in data %}
+                              <option value="{{row.id}}">{{row.nome}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="form-radio">
-                      <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="cargo" id="optionsRadios2" value="Supervisor"> Supervisor </label>
-                    </div>
-                    <div class="form-radio">
-                        <label class="form-check-label">
-                          <input type="radio" class="form-check-input" name="cargo" id="optionsRadios3" value="Administrador"> Administrador </label>
-                      </div>
                   </div>
                   <div class="form-group">
-                    
-					<label>Imagem</label>
-					<br><br>
-                      <input type="file" name="img[]" class="file-upload-default">
-                      <div class="input-group col-xs-12"> 
-                        <span class="input-group-append">
-                          <input type="file" id="img" name="img">
-                        </span>
-                      </div>
-                    </div>
+                    <label for="exampleInputName1">Quantidade</label>
+                    <input type="number" class="form-control" name="quantidade" id="quantidade" placeholder="" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputName1">Data de início</label>
+                    <input type="date" class="form-control" name="inicio" id="inicio" placeholder="" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputName1">Data de fim</label>
+                    <input type="date" class="form-control" name="fim" id="fim" placeholder="" required>
+                  </div>
+                  <input type="hidden" class="form-control" value="pendente" name="estado" id="estado" placeholder="">
                     <button type="submit" id="insert" class="btn btn-lg btn-primary">Inserir</button>
                 <!--<button type="button" id="create" class="btn btn-primary">Criar</button>
                 <button type="button" id="list" class="btn btn-primary">Atualizar</button>
