@@ -58,7 +58,6 @@
         console.log("Fetch error: " + error);
       });
   }
-
   </script>
   </head>
   <body>
@@ -80,16 +79,24 @@
    <form method="POST" action="/editpedido" id="pedido" name="pedido" enctype="multipart/form-data">
                 <fieldset>
                   <div class="form-group">
+                    <input type="text" hidden class="form-control" value="{{update.id}}" placeholder="" id="id" name="id">
                     <label for="exampleInputName1">Agente que fez pedido</label>
-                    <input type="text" value="{{update.agente}}" class="form-control" name="user" id="user" placeholder="">
+                    <div class="col-sm-9">
+                        <select class="form-control" name="user" id="user" required>
+                          <option value=""></option>
+                          {% for row in users %}
+                              <option {% if row.id==update.id %} selected {% endif %} value="{{row.id}}">{{row.id}} - {{row.codigo}}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="exampleInputName1">Artigo</label>
                     <div class="col-sm-9">
-                        <select class="form-control" value="{{update.artigo}}" name="artigos" id="artigos" required>
+                        <select class="form-control" name="artigos" id="artigos" required>
                           <option value=""></option>
                             {% for row in artigos %}
-                              <option {% if row.id=="{{update.artigo}}" %} selected {% endif %} value="{{row.id}}">{{row.nome}}</option>
+                              <option {% if row.id==update.artigo %} selected {% endif %} value="{{row.id}}">{{row.nome}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -108,7 +115,15 @@
                   </div>
                   <div class="form-group">
                     <label for="exampleInputName1">Estado</label>
-                    <input type="text" class="form-control" alue="{{update.estado}}" name="estado" id="estado" placeholder="">
+                    <div class="col-sm-9">
+                        <select class="form-control" name="estado" id="estado" required>
+                          <option value=""></option>
+                              <option {% if update.estado=="pendente" %} selected {% endif %} value="pendente">Pendente</option>
+                              <option {% if update.estado=="aceite" %} selected {% endif %} value="aceite">Aceite</option>
+                              <option {% if update.estado=="recusado" %} selected {% endif %} value="recusado">Recusado</option>
+                              <option {% if update.estado=="devolvido" %} selected {% endif %} value="devolvido">Devolvido</option>
+                        </select>
+                    </div>
                   </div>
                     <button type="submit" id="insert" class="btn btn-lg btn-primary">Inserir</button>
                 <!--<button type="button" id="create" class="btn btn-primary">Criar</button>

@@ -243,10 +243,10 @@ def updatepedido():
     if 'username' in session:
         artigos = Artigos.query.all()
         data=request.args.get('id_pedido')
-        update = Pedidos.query.filter_by(id=data)
-        print(update)
+        update = Pedidos.query.filter_by(id=data).first()
+        users = Users.query.all()
 
-        return render_template('editarpedido.html', update=update, artigos=artigos)
+        return render_template('editarpedido.html', update=update, artigos=artigos, users=users)
     return redirect(url_for('index'))   
 
 @app.route('/editpedido', methods=['POST'])
@@ -254,25 +254,18 @@ def editpedido():
     if 'username' in session:
         
         data = request.form['id']
-        update = Artigos.query.filter_by(id=data).first()
-        bd_img = update.imgpath
-        img = request.files['img']
+        update = Pedidos.query.filter_by(id=data).first()
 
-        if request.method == 'POST' and 'nome' in request.form:
-            update.nome = request.form['nome'] 
+        update.agente = request.form['user']   
+        update.artigo = request.form['artigos']  
+        update.quantidade = request.form['quantidade']
+        update.inicio = request.form['inicio']
+        update.fim = request.form['fim']
+        update.estado = request.form['estado']
 
-        if request.method == 'POST' and 'quant' in request.form:    
-            update.quant = request.form['quant']
-
-        if request.method == 'POST' and 'desc' in request.form:
-            update.description = request.form['desc']     
-
-        update.imgpath = bd_img
-        if request.method == 'POST' and img:
-            update.imgpath = 'static/upload/' + files.save(request.files['img']) 
 
         db.session.commit()
-        return redirect(url_for('listartigos'))
+        return redirect(url_for('listpedidos'))
     return redirect(url_for('index'))    
 
 @app.route('/listpedidos')
