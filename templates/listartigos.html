@@ -145,11 +145,14 @@
                             <th>Quantidade</th>
                             <th>Imagem</th>
                             <th>Descrição</th>
+                            {% if session['cargo'] == "Supervisor" or session['cargo'] == "Admin"%}
                             <th>Editar</th>
                             <th>Apagar</th>
+                            {% endif %}
                           </tr>
                         </thead>
                         <tbody>
+                          {% if session['cargo'] == "Supervisor" or session['cargo'] == "Admin"%}
                             {% for row in data %}
                               <tr>
                                   <td>{{row.id}}</td>
@@ -161,6 +164,17 @@
                                   <td><button type="button" onclick="apagar({{row.id}})" class="btn btn-icons btn-rounded btn-danger"><i class="fa fa-trash-o"></i></button></td>
                               </tr>
                             {% endfor %}
+                          {% else %} 
+                            {% for row in data %}
+                              <tr>
+                                  <td>{{row.id}}</td>
+                                  <td>{{row.nome}}</td>
+                                  <td>{{row.quant}}</td>
+                                  <td><img src="{{row.imgpath}}" alt="Perfil" width="200" height="200"></td>
+                                  <td>{{row.description}}</td>
+                              </tr>
+                            {% endfor %}
+                          {% endif %}
                         </tbody>
                       </table>
                     </div>
