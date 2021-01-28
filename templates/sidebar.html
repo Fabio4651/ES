@@ -12,6 +12,12 @@
                 </div>
               </a>
             </li>
+
+
+            <!--<div>Quarteleiro listar artigos , adicionar Pedidos, listar artigos mas no pode apagar ou editar</div>
+            <div>Supervisor listar adicionar artigos , listar adicionar Pedidos</div>
+            <div>Admin tudo</div>-->
+
       <li class="nav-item nav-category">Artigos</li>
       <li class="nav-item">
         <a class="nav-link" href="/listartigos">
@@ -19,12 +25,16 @@
           <span class="menu-title">Listar Artigos</span>
         </a>
       </li>
+      {% if session['cargo'] == "Supervisor" or session['cargo'] == "Admin"%}
       <li class="nav-item">
         <a class="nav-link" href="/artigos">
           <i class="menu-icon typcn typcn-document-text"></i>
           <span class="menu-title">Adicionar Artigos</span>
         </a>
       </li>
+      {% endif %}
+ 
+    {% if session['cargo'] == "Admin" %}
       <li class="nav-item nav-category">Utilizadores</li>
       <li class="nav-item">
         <a class="nav-link" href="/listusers">
@@ -38,6 +48,8 @@
           <span class="menu-title">Adicionar Utilizadores</span>
         </a>
       </li>
+    {% endif %}
+
       <li class="nav-item nav-category">Pedidos</li>
       <li class="nav-item">
         <a class="nav-link" href="/listpedidos">
@@ -51,5 +63,6 @@
           <span class="menu-title">Adicionar Pedidos</span>
         </a>
       </li>  
+    
     </ul>
   </nav>
